@@ -14,6 +14,65 @@
         <el-row>
             <el-col :span="12" :offset="6">
                 <h3>Cycles</h3>
+                <el-form :model="form" label-width="200px">
+                    <template v-for="day in [
+                        {
+                            column: 'monday',
+                            display: 'Monday',
+                            formItem: form.monday,
+                        },
+                        {
+                            column: 'tuesday',
+                            display: 'Tuesday',
+                            formItem: form.tuesday,
+                        },
+                        {
+                            column: 'wednesday',
+                            display: 'Wednesday',
+                            formItem: form.wednesday,
+                        },
+                        {
+                            column: 'thursday',
+                            display: 'Thursday',
+                            formItem: form.thursday,
+                        },
+                        {
+                            column: 'friday',
+                            display: 'Friday',
+                            formItem: form.friday,
+                        },
+                        {
+                            column: 'saturday',
+                            display: 'Saturday',
+                            formItem: form.saturday,
+                        },
+                        {
+                            column: 'sunday',
+                            display: 'Sunday',
+                            formItem: form.sunday,
+                        },
+                    ]">
+                        <el-form-item :label="day.display">
+                            <el-button type="primary" @click="addItem(day.formItem)">Add item</el-button>
+                        </el-form-item>
+                        <el-form-item label="items">
+                            <div v-for="item in day.formItem.items">
+                                <el-form>
+                                    <el-form-item label=""></el-form-item>
+                                    <el-form-item label="content">
+                                        <el-input v-model="item.content"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="start">
+                                        <el-time-picker v-model="item.start"></el-time-picker>
+                                    </el-form-item>
+                                    <el-form-item label="end">
+                                        <el-time-picker v-model="item.end"></el-time-picker>
+                                    </el-form-item>
+                                </el-form>
+                            </div>
+                        </el-form-item>
+                    </template>
+                </el-form>
             </el-col>
         </el-row>
     </div>
@@ -25,12 +84,56 @@
         new Vue({
             el: '#app',
             data() {
+                let form = JSON.parse(localStorage.getItem('calendar-form'));
+                if (!form) {
+                    form = {
+                        monday: {
+                            items: [this.newItem()],
+                        },
+                        tuesday: {
+                            items: [this.newItem()],
+                        },
+                        wednesday: {
+                            items: [this.newItem()],
+                        },
+                        thursday: {
+                            items: [this.newItem()],
+                        },
+                        friday: {
+                            items: [this.newItem()],
+                        },
+                        saturday: {
+                            items: [this.newItem()],
+                        },
+                        sunday: {
+                            items: [this.newItem()],
+                        },
+                    };
+                }
+
                 return {
+                    form: form,
                 };
             },
             methods: {
+                newItem() {
+                    return {
+                        content: '',
+                        start: '',
+                        end: '',
+                    };
+                },
+                addItem(formItem) {
+                    formItem.items.push(this.newItem());
+                },
             },
             watch: {
+                form: {
+                    handler(form) {
+                        localStorage.setItem('calendar-form', JSON.stringify(form));
+                    },
+                    deep: true,
+                },
             },
         })
     </script>
