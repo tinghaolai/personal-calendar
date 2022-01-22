@@ -8,9 +8,60 @@
         body {
             background-color: #E4E7ED;
         }
+
+        .vc-day.is-not-in-month div {
+            opacity: 0.5 !important;
+        }
+
+        .calendarCard {
+            padding: 5px;
+        }
+
+        .dayInfo {
+            border: 2px solid #E6A23C;
+            background-color: #E6A23C;
+            color: white;
+            border-radius: 5px;
+            padding: 2px;
+        }
     </style>
     <body>
     <div id="app">
+        <el-row>
+            <h2 style="text-align: center">Workout calendar</h2>
+            <v-date-picker v-model="calendarDate"
+                           :attributes='calendarAttributes'
+                           show-weeknumbers="left-outside"
+                           is-dark
+                           is-expanded
+                           is-range>
+                <template v-slot:day-content="{ day, attributes }">
+                    <template v-for="info in convertDataInfo(day)">
+                        <div class="calendarCard">
+                            <el-card class="box-card">
+                                <div slot="header" class="clearfix">
+                                    <span class="dayInfo">{{ info.day }}</span>
+                                </div>
+                                <template v-if="info.regularInfo.items && info.regularInfo.items.length">
+                                    <div v-for="item in info.regularInfo.items" v-if="item.content">
+                                        <div>{{ item.content }}</div>
+                                        <div v-if="item.start && item.end">
+                                            <div>{{ convertTimeFormat(item.start) }} ~ {{ convertTimeFormat(item.end) }}</div>
+                                        </div>
+                                        <div v-else-if="item.start">
+                                            <div>Start at: {{ convertTimeFormat(item.start) }}</div>
+                                        </div>
+                                        <div v-else-if="item.end">
+                                            <div>Done before: {{ convertTimeFormat(item.end) }}</div>
+                                        </div>
+                                    </div>
+                                </template>
+                            </el-card>
+                        </div>
+                    </template>
+                </template>
+            </v-date-picker>
+        </el-row>
         <el-row>
             <el-col :span="12" :offset="6">
                 <h3>Cycles</h3>
@@ -79,6 +130,7 @@
     <script src="plugins/vue.js"></script>
     <script src="plugins/element.min.js"></script>
     <script src="plugins/moment.min.js"></script>
+    <script src="plugins/v-calendar.umd.min.js"></script>
     <script type="text/javascript">
 
         new Vue({
@@ -113,6 +165,8 @@
 
                 return {
                     form: form,
+                    calendarDate: null,
+                    calendarAttributes: [],
                 };
             },
             methods: {
@@ -125,6 +179,49 @@
                 },
                 addItem(formItem) {
                     formItem.items.push(this.newItem());
+                },
+                convertDataInfo(day) {
+                    let formatDate = moment(day.date).format('YYYY-MM-DD');
+                    let formIndex;
+                    switch (moment(day.date).day()) {
+                        case 0:
+                            formIndex = 'sunday';
+                            break;
+                        case 1:
+                            formIndex = 'monday';
+                            break;
+                        case 2:
+                            formIndex = 'tuesday';
+                            break;
+                        case 3:
+                            formIndex = 'wednesday';
+                            break;
+                        case 4:
+                            formIndex = 'thursday';
+                            break;
+                        case 5:
+                            formIndex = 'friday';
+                            break;
+                        case 6:
+                            formIndex = 'saturday';
+                            break;
+                    }
+
+                    return {
+                        info: {
+                            day: day.day,
+                            date: formatDate,
+                            isToday: day.isToday,
+                            regularInfo: this.form[formIndex],
+                        },
+                    };
+                },
+                convertTimeFormat(time) {
+                    if (!time) {
+                        return '-';
+                    }
+
+                    return moment(time).format('HH:mm');
                 },
             },
             watch: {
