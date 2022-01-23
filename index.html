@@ -24,6 +24,14 @@
             border-radius: 5px;
             padding: 2px;
         }
+
+        .addDayItem {
+            border: 2px solid #409EFF;
+            background-color: #409EFF;
+            color: white;
+            border-radius: 5px;
+            padding: 2px;
+        }
     </style>
     <body>
     <div id="app">
@@ -41,6 +49,7 @@
                             <el-card class="box-card">
                                 <div slot="header" class="clearfix">
                                     <span class="dayInfo">{{ info.day }}</span>
+                                    <button class="addDayItem" @click="addDayItem(info)">+</button>
                                 </div>
                                 <template v-if="info.regularInfo.items && info.regularInfo.items.length">
                                     <div v-for="item in info.regularInfo.items" v-if="item.content">
@@ -126,6 +135,37 @@
                 </el-form>
             </el-col>
         </el-row>
+        <el-dialog title="Add day item"
+                :visible.sync="ifAddDayItem"
+                width="30%">
+            <el-form :model="dayItemForm"
+                     label-width="80px"
+                     ref="dayItemForm"
+                     :rules="{
+                date: [{ required: true, message: 'must enter date', trigger: 'blur' }],
+                content: [{ required: true, message: 'must enter content', trigger: 'blur' }],
+            }">
+                <el-form-item label="date" prop="date">
+                    <el-date-picker format="yyyy-MM-dd"
+                                    value-format="yyyy-MM-dd"
+                                    v-model="dayItemForm.date"
+                                    type="date">
+                    </el-date-picker>
+                </el-form-item>
+                <el-form-item label="content" prop="content">
+                    <el-input v-model="dayItemForm.content"></el-input>
+                </el-form-item>
+                <el-form-item label="start">
+                    <el-time-picker v-model="dayItemForm.start"></el-time-picker>
+                </el-form-item>
+                <el-form-item label="end">
+                    <el-time-picker v-model="dayItemForm.end"></el-time-picker>
+                </el-form-item>
+                <el-form-item label="">
+                    <el-button type="primary" @click="storeDayItem">Store</el-button>
+                </el-form-item>
+            </el-form>
+        </el-dialog>
     </div>
     <script src="plugins/vue.js"></script>
     <script src="plugins/element.min.js"></script>
@@ -163,10 +203,23 @@
                     };
                 }
 
+                let dayItems = JSON.parse(localStorage.getItem('calendar-day-items'));
+                if (!dayItems) {
+                    dayItems = {};
+                }
+
                 return {
                     form: form,
+                    dayItems: dayItems,
                     calendarDate: null,
                     calendarAttributes: [],
+                    ifAddDayItem: false,
+                    dayItemForm: {
+                        date: null,
+                        content: null,
+                        start: null,
+                        end: null,
+                    },
                 };
             },
             methods: {
@@ -223,11 +276,33 @@
 
                     return moment(time).format('HH:mm');
                 },
+                addDayItem(info) {
+                    this.ifAddDayItem = true;
+                    this.dayItemForm.date = info.date;
+                },
+                storeDayItem() {
+                    this.$refs['dayItemForm'].validate((valid) => {
+                        if (valid) {
+                            if (!this.dayItems[this.dayItemForm.date]) {
+                                this.$set(this.dayItems, this.dayItemForm.date, []);
+                            }
+
+                            this.dayItems[this.dayItemForm.date].push(this.dayItemForm);
+                            this.ifAddDayItem = false;
+                        }
+                    });
+                },
             },
             watch: {
                 form: {
                     handler(form) {
                         localStorage.setItem('calendar-form', JSON.stringify(form));
+                    },
+                    deep: true,
+                },
+                dayItems: {
+                    handler(dayItems) {
+                        localStorage.setItem('calendar-day-items', JSON.stringify(dayItems));
                     },
                     deep: true,
                 },
