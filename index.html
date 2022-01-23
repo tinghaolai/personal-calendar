@@ -65,6 +65,20 @@
                                         </div>
                                     </div>
                                 </template>
+                                <template v-if="dayItems[info.date] && dayItems[info.date].length">
+                                    <div v-for="item in dayItems[info.date]">
+                                        <div>{{ item.content }}</div>
+                                        <div v-if="item.start && item.end">
+                                            <div>{{ convertTimeFormat(item.start) }} ~ {{ convertTimeFormat(item.end) }}</div>
+                                        </div>
+                                        <div v-else-if="item.start">
+                                            <div>Start at: {{ convertTimeFormat(item.start) }}</div>
+                                        </div>
+                                        <div v-else-if="item.end">
+                                            <div>Done before: {{ convertTimeFormat(item.end) }}</div>
+                                        </div>
+                                    </div>
+                                </template>
                             </el-card>
                         </div>
                     </template>
