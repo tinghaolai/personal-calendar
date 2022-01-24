@@ -32,6 +32,13 @@
             border-radius: 5px;
             padding: 2px;
         }
+
+        .deleteDayItem {
+            border: 2px solid #F56C6C;
+            background-color: #F56C6C;
+            color: white;
+            border-radius: 5px;
+        }
     </style>
     <body>
     <div id="app">
@@ -66,8 +73,11 @@
                                     </div>
                                 </template>
                                 <template v-if="dayItems[info.date] && dayItems[info.date].length">
-                                    <div v-for="item in dayItems[info.date]">
-                                        <div>{{ item.content }}</div>
+                                    <div v-for="(item, dayItemIndex) in dayItems[info.date]">
+                                        <div>
+                                            <button class="deleteDayItem" @click="deleteDayItem(dayItems[info.date], dayItemIndex)">x</button>
+                                            {{ item.content }}
+                                        </div>
                                         <div v-if="item.start && item.end">
                                             <div>{{ convertTimeFormat(item.start) }} ~ {{ convertTimeFormat(item.end) }}</div>
                                         </div>
@@ -130,9 +140,11 @@
                             <el-button type="primary" @click="addItem(day.formItem)">Add item</el-button>
                         </el-form-item>
                         <el-form-item label="items">
-                            <div v-for="item in day.formItem.items">
+                            <div v-for="(item, itemIndex) in day.formItem.items">
                                 <el-form>
-                                    <el-form-item label=""></el-form-item>
+                                    <el-form-item label="">
+                                        <el-button type="danger" @click="deleteFormItem(day.formItem.items, itemIndex)">Delete</el-button>
+                                    </el-form-item>
                                     <el-form-item label="content">
                                         <el-input v-model="item.content"></el-input>
                                     </el-form-item>
@@ -305,6 +317,12 @@
                             this.ifAddDayItem = false;
                         }
                     });
+                },
+                deleteFormItem(items, deleteIndex) {
+                    items.splice(deleteIndex, 1);
+                },
+                deleteDayItem(items, deleteIndex) {
+                    items.splice(deleteIndex, 1);
                 },
             },
             watch: {
