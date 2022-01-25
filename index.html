@@ -327,7 +327,13 @@
                     items.splice(deleteIndex, 1);
                 },
                 deleteDayItem(items, deleteIndex) {
-                    items.splice(deleteIndex, 1);
+                    this.$confirm('Make sure you want to delete', 'Alert', {
+                        confirmButtonText: 'Confirm',
+                        cancelButtonText: 'Cancel',
+                        type: 'warning'
+                    }).then(() => {
+                        items.splice(deleteIndex, 1);
+                    }).catch(() => {});
                 },
                 finishDayItem(item, finished) {
                     this.$set(item, 'finished', finished);
