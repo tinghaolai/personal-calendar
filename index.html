@@ -76,7 +76,12 @@
                                     <div v-for="(item, dayItemIndex) in dayItems[info.date]">
                                         <div>
                                             <button class="deleteDayItem" @click="deleteDayItem(dayItems[info.date], dayItemIndex)">x</button>
-                                            {{ item.content }}
+                                            <el-popconfirm :title="'UnFinish ' + item.content" @confirm="finishDayItem(item, false)" v-if="item.finished">
+                                                <div slot="reference" style="color: #67C23A">{{ item.content }}</div>
+                                            </el-popconfirm>
+                                            <el-popconfirm :title="'Finish ' + item.content" @confirm="finishDayItem(item, true)" v-else>
+                                                <div slot="reference">{{ item.content }}</div>
+                                            </el-popconfirm>
                                         </div>
                                         <div v-if="item.start && item.end">
                                             <div>{{ convertTimeFormat(item.start) }} ~ {{ convertTimeFormat(item.end) }}</div>
@@ -323,6 +328,9 @@
                 },
                 deleteDayItem(items, deleteIndex) {
                     items.splice(deleteIndex, 1);
+                },
+                finishDayItem(item, finished) {
+                    this.$set(item, 'finished', finished);
                 },
             },
             watch: {
