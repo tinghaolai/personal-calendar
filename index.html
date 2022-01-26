@@ -60,7 +60,14 @@
                                 </div>
                                 <template v-if="info.regularInfo.items && info.regularInfo.items.length">
                                     <div v-for="item in info.regularInfo.items" v-if="item.content">
-                                        <div>{{ item.content }}</div>
+                                        <el-popconfirm :title="'Finish ' + item.content"
+                                                       @confirm="finishRegularItem(info.date, item, false)"
+                                                       v-if="regularItemFinish[info.date] && regularItemFinish[info.date][item.id]">
+                                            <div slot="reference" style="color: #67C23A">{{ item.content }}</div>
+                                        </el-popconfirm>
+                                        <el-popconfirm :title="'Finish ' + item.content" @confirm="finishRegularItem(info.date, item, true)" v-else>
+                                            <div slot="reference">{{ item.content }}</div>
+                                        </el-popconfirm>
                                         <div v-if="item.start && item.end">
                                             <div>{{ convertTimeFormat(item.start) }} ~ {{ convertTimeFormat(item.end) }}</div>
                                         </div>
@@ -239,9 +246,15 @@
                     dayItems = {};
                 }
 
+                let regularItemFinish = JSON.parse(localStorage.getItem('calendar-regular-item-finish'));
+                if (!regularItemFinish) {
+                    regularItemFinish = {};
+                }
+
                 return {
                     form: form,
                     dayItems: dayItems,
+                    regularItemFinish: regularItemFinish,
                     calendarDate: null,
                     calendarAttributes: [],
                     ifAddDayItem: false,
@@ -259,6 +272,7 @@
                         content: '',
                         start: '',
                         end: '',
+                        id: Math.random().toString(36).slice(2),
                     };
                 },
                 addItem(formItem) {
@@ -338,6 +352,13 @@
                 finishDayItem(item, finished) {
                     this.$set(item, 'finished', finished);
                 },
+                finishRegularItem(date, item, finished) {
+                    if (!this.regularItemFinish[date]) {
+                        this.$set(this.regularItemFinish, date, {});
+                    }
+
+                    this.$set(this.regularItemFinish[date], item.id, finished);
+                },
             },
             watch: {
                 form: {
@@ -349,6 +370,12 @@
                 dayItems: {
                     handler(dayItems) {
                         localStorage.setItem('calendar-day-items', JSON.stringify(dayItems));
+                    },
+                    deep: true,
+                },
+                regularItemFinish: {
+                    handler(regularItemFinish) {
+                        localStorage.setItem('calendar-regular-item-finish', JSON.stringify(regularItemFinish));
                     },
                     deep: true,
                 },
