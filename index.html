@@ -109,6 +109,12 @@
         </el-row>
         <el-row>
             <el-col :span="12" :offset="6">
+                <h3>Functions</h3>
+                <el-button @click="sortOptions" type="primary">Sort options</el-button>
+            </el-col>
+        </el-row>
+        <el-row>
+            <el-col :span="12" :offset="6">
                 <h3>Form storage</h3>
                 <el-button @click="displayFormStore = true;" type="primary">Store form</el-button>
                 <el-form>
@@ -394,6 +400,13 @@
                     delete this.formStorage[formName];
                     localStorage.setItem('workout-calendar-form-storage', JSON.stringify(this.formStorage));
                     this.$forceUpdate();
+                },
+                sortOptions() {
+                    Object.keys(this.form).forEach(key => {
+                        this.form[key].items.sort((a, b) => {
+                            return moment(a.start).isBefore(b.start) ? 1 : -1;
+                        })
+                    });
                 },
             },
             watch: {
