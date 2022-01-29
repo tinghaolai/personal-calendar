@@ -68,7 +68,7 @@
                                         <el-popconfirm :title="'Finish ' + item.content" @confirm="finishRegularItem(info.date, item, true)" v-else>
                                             <div slot="reference">{{ item.content }}</div>
                                         </el-popconfirm>
-                                        <div v-if="item.start && item.end">
+                                        <div v-if="item.start && item.end" :style="(item.inTimeRange) ? 'color: #F56C6C;' : ''">
                                             <div>{{ convertTimeFormat(item.start) }} ~ {{ convertTimeFormat(item.end) }}</div>
                                         </div>
                                         <div v-else-if="item.start">
@@ -332,6 +332,16 @@
                         case 6:
                             formIndex = 'saturday';
                             break;
+                    }
+
+                    if (day.isToday) {
+                        this.form[formIndex].items.map(item => {
+                            if (item.start && item.end && moment().isBetween(item.start, item.end)) {
+                                item.inTimeRange = true;
+                            }
+
+                            return item;
+                        })
                     }
 
                     return {
