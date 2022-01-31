@@ -336,7 +336,14 @@
 
                     if (day.isToday) {
                         this.form[formIndex].items.map(item => {
-                            if (item.start && item.end && moment().isBetween(item.start, item.end)) {
+                            if (
+                                item.start &&
+                                item.end &&
+                                moment().isBetween(
+                                    moment().format('YYYY-MM-DD') + ' ' + moment(item.start).format('HH:MM:ss'),
+                                    moment().format('YYYY-MM-DD') + ' ' + moment(item.end).format('HH:mm:ss')
+                                )
+                            ) {
                                 item.inTimeRange = true;
                             }
 
@@ -414,7 +421,9 @@
                 sortOptions() {
                     Object.keys(this.form).forEach(key => {
                         this.form[key].items.sort((a, b) => {
-                            return moment(a.start).isBefore(b.start) ? 1 : -1;
+                            return moment(moment().format('YYYY-MM-DD') + ' ' + moment(a.start).format('HH:MM:ss'))
+                                .isBefore(moment(moment().format('YYYY-MM-DD') + ' ' + moment(b.start).format('HH:MM:ss')))
+                                ? -1 : 1;
                         })
                     });
                 },
