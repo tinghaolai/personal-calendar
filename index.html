@@ -378,7 +378,7 @@
                                 this.$set(this.dayItems, this.dayItemForm.date, []);
                             }
 
-                            this.dayItems[this.dayItemForm.date].push(this.dayItemForm);
+                            this.dayItems[this.dayItemForm.date].push(JSON.parse(JSON.stringify(this.dayItemForm)));
                             this.ifAddDayItem = false;
                         }
                     });
