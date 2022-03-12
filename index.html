@@ -109,6 +109,27 @@
         </el-row>
         <el-row>
             <el-col :span="12" :offset="6">
+                <h3>Todo</h3>
+            </el-col>
+        </el-row>
+        <el-row>
+            <el-col :span="12" :offset="6">
+                <el-input type="textarea"
+                        v-model="todoInput">
+                </el-input>
+                <el-button @click="storeTodo" type="primary">Store</el-button>
+            </el-col>
+        </el-row>
+        <el-row>
+            <el-col :span="12" :offset="6">
+                <div v-for="(data, dataIndex) in todo">
+                    {{ data.content }}
+                    <el-button type="danger" @click="deleteFormItem(todo, dataIndex)">x</el-button>
+                </div>
+            </el-col>
+        </el-row>
+        <el-row>
+            <el-col :span="12" :offset="6">
                 <h3>Functions</h3>
                 <el-button @click="sortOptions" type="primary">Sort options</el-button>
             </el-col>
@@ -276,8 +297,14 @@
                 }
 
                 let formStorage = JSON.parse(localStorage.getItem('calendar-form-storage'));
+                let todo = JSON.parse(localStorage.getItem('calendar-todo'));
+                if (!todo) {
+                    todo = [];
+                }
 
                 return {
+                    todoInput: '',
+                    todo: todo,
                     displayFormStore: false,
                     formStorageName: '',
                     formStorage: (formStorage) ? formStorage : {},
@@ -427,6 +454,17 @@
                         })
                     });
                 },
+                storeTodo() {
+                    if (!this.todoInput) {
+                        return;
+                    }
+
+                    this.todo.push({
+                        content: this.todoInput,
+                    });
+
+                    this.todoInput = '';
+                },
             },
             watch: {
                 form: {
@@ -450,6 +488,12 @@
                 formStorage: {
                     handler() {
                         localStorage.setItem('calendar-form-storage', JSON.stringify(this.formStorage));
+                    },
+                    deep: true,
+                },
+                todo: {
+                    handler() {
+                        localStorage.setItem('calendar-todo', JSON.stringify(this.todo));
                     },
                     deep: true,
                 },
