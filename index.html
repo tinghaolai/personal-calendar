@@ -127,7 +127,8 @@
                     <h4>{{ groupData.type }}</h4>
                     <div v-for="(data, dataIndex) in groupData.todo">
                         <el-input style="width: 100px" v-model="data.type"></el-input>
-                        {{ data.content }}
+                        <el-input v-if="data.edit" v-model="data.content" @keydown.enter.native="finishEdit(data)"></el-input>
+                        <span v-else @click="todoEdit(data)">{{ data.content }}</span>
                         <el-button type="danger" @click="deleteTodo(data)">x</el-button>
                     </div>
                 </template>
@@ -473,6 +474,12 @@
                     });
 
                     this.todoInput = '';
+                },
+                todoEdit(todo) {
+                    this.$set(todo, 'edit', true);
+                },
+                finishEdit(todo) {
+                    todo.edit = false;
                 },
             },
             watch: {
