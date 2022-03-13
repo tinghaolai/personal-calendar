@@ -124,6 +124,7 @@
         <el-row>
             <el-col :span="12" :offset="6">
                 <div v-for="(data, dataIndex) in todo">
+                    <el-input style="width: 100px" v-model="data.type"></el-input>
                     {{ data.content }}
                     <el-button type="danger" @click="deleteFormItem(todo, dataIndex)">x</el-button>
                 </div>
@@ -462,6 +463,7 @@
 
                     this.todo.push({
                         content: this.todoInput,
+                        type: '',
                     });
 
                     this.todoInput = '';
