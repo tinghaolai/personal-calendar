@@ -123,11 +123,14 @@
         </el-row>
         <el-row>
             <el-col :span="12" :offset="6">
-                <div v-for="(data, dataIndex) in todo">
-                    <el-input style="width: 100px" v-model="data.type"></el-input>
-                    {{ data.content }}
-                    <el-button type="danger" @click="deleteTodo(data)">x</el-button>
-                </div>
+                <template v-for="groupData in todoGroup">
+                    <h4>{{ groupData.type }}</h4>
+                    <div v-for="(data, dataIndex) in groupData.todo">
+                        <el-input style="width: 100px" v-model="data.type"></el-input>
+                        {{ data.content }}
+                        <el-button type="danger" @click="deleteTodo(data)">x</el-button>
+                    </div>
+                </template>
             </el-col>
         </el-row>
         <el-row>
@@ -504,6 +507,46 @@
                     deep: true,
                 },
             },
+            computed: {
+                todoGroup: function () {
+                    let todoTypes = {};
+                    this.todo.forEach(data => {
+                        if (todoTypes[data.type]) {
+                            todoTypes[data.type].push(data);
+                        } else {
+                            todoTypes[data.type] = [data];
+                        }
+                    });
+
+                    let todoGroup = [];
+                    let empty = todoTypes[''];
+                    let deleted = todoTypes['trash'];
+                    delete todoTypes[''];
+                    delete todoTypes['trash'];
+                    if (empty) {
+                        todoGroup.push({
+                            type: '',
+                            todo: empty,
+                        })
+                    }
+
+                    Object.keys(todoTypes).forEach(type => {
+                        todoGroup.push({
+                            type: type,
+                            todo: todoTypes[type],
+                        });
+                    });
+
+                    if (deleted) {
+                        todoGroup.push({
+                            type: 'trash',
+                            todo: deleted,
+                        })
+                    }
+
+                    return todoGroup;
+                },
+            }
         })
     </script>
     </body>
