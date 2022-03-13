@@ -115,7 +115,8 @@
         <el-row>
             <el-col :span="12" :offset="6">
                 <el-input type="textarea"
-                        v-model="todoInput">
+                          @keydown.enter.native="storeTodo"
+                          v-model="todoInput">
                 </el-input>
                 <el-button @click="storeTodo" type="primary">Store</el-button>
             </el-col>
