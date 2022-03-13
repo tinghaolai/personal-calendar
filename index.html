@@ -126,7 +126,7 @@
                 <div v-for="(data, dataIndex) in todo">
                     <el-input style="width: 100px" v-model="data.type"></el-input>
                     {{ data.content }}
-                    <el-button type="danger" @click="deleteFormItem(todo, dataIndex)">x</el-button>
+                    <el-button type="danger" @click="deleteTodo(data)">x</el-button>
                 </div>
             </el-col>
         </el-row>
@@ -414,6 +414,9 @@
                 },
                 deleteFormItem(items, deleteIndex) {
                     items.splice(deleteIndex, 1);
+                },
+                deleteTodo(todo) {
+                    todo.type = 'trash';
                 },
                 deleteDayItem(items, deleteIndex) {
                     this.$confirm('Make sure you want to delete', 'Alert', {
