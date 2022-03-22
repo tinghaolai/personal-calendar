@@ -128,7 +128,13 @@
                 <template v-for="groupData in todoGroup">
                     <h4>{{ groupData.type }}</h4>
                     <div v-for="(data, dataIndex) in groupData.todo">
-                        <el-input style="width: 100px" v-model="data.type"></el-input>
+                        <el-autocomplete
+                                style="width: 100px"
+                                v-model="data.type"
+                                class="inline-input"
+                                v-model="state1"
+                                :fetch-suggestions="todoTypeSearch"
+                        ></el-autocomplete>
                         <el-input v-if="data.edit" v-model="data.content" @keydown.enter.native="finishEdit(data)"></el-input>
                         <span v-else @click="todoEdit(data)">{{ data.content }}</span>
                         <el-button type="danger" @click="deleteTodo(data)">x</el-button>
@@ -509,6 +515,9 @@
                            found.type = 'trash';
                        }
                     });
+                },
+                todoTypeSearch(queryString, cb) {
+                    cb(this.todoGroup.map(data => ({ value: data.type })));
                 },
             },
             watch: {
