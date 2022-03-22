@@ -484,9 +484,16 @@
                         return;
                     }
 
+                    let type = '';
+                    let match = this.todoInput.match(/^(#)([^ ]+)( )(.+)/);
+                    if (match) {
+                        type = match[2];
+                        this.todoInput = match[4];
+                    }
+
                     this.todo.push({
                         content: this.todoInput,
-                        type: '',
+                        type: type,
                     });
 
                     this.todoInput = '';
