@@ -137,7 +137,7 @@
                         ></el-autocomplete>
                         <el-input v-if="data.edit" v-model="data.content" @keydown.enter.native="finishEdit(data)"></el-input>
                         <span v-else @click="todoEdit(data)">{{ data.content }}</span>
-                        <el-button type="danger" @click="deleteTodo(data)">x</el-button>
+                        <el-button type="danger" @click="deleteTodo(data, dataIndex)">x</el-button>
                     </div>
                 </template>
             </el-col>
@@ -435,8 +435,19 @@
                 deleteFormItem(items, deleteIndex) {
                     items.splice(deleteIndex, 1);
                 },
-                deleteTodo(todo) {
-                    todo.type = 'trash';
+                deleteTodo(todo, dataIndex) {
+                    if (todo.type === 'trash') {
+                        this.$confirm('delete' + todo.content, 'force delete', {
+                            confirmButtonText: 'yes',
+                            cancelButtonText: 'no',
+                            type: 'warning'
+                        }).then(() => {
+                            this.todo.splice(dataIndex, 1);
+                        }).catch(() => {
+                        });
+                    } else {
+                        todo.type = 'trash';
+                    }
                 },
                 deleteDayItem(items, deleteIndex) {
                     this.$confirm('Make sure you want to delete', 'Alert', {
