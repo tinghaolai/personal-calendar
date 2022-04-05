@@ -136,7 +136,7 @@
                                 :fetch-suggestions="todoTypeSearch"
                         ></el-autocomplete>
                         <el-input v-if="data.edit" v-model="data.content" @keydown.enter.native="finishEdit(data)"></el-input>
-                        <span v-else @click="todoEdit(data)">{{ data.content }}</span>
+                        <span v-else @click="todoEdit(data)"  @contextmenu="copyTodo(data)">{{ data.content }}</span>
                         <el-button type="danger" @click="deleteTodo(data, dataIndex)">x</el-button>
                     </div>
                 </template>
@@ -536,6 +536,14 @@
                 },
                 todoTypeSearch(queryString, cb) {
                     cb(this.todoGroup.map(data => ({ value: data.type })));
+                },
+                copyTodo(todo) {
+                    let textArea = document.createElement('textarea');
+                    textArea.value = todo.content;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('Copy');
+                    textArea.remove();
                 },
             },
             watch: {
