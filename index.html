@@ -442,7 +442,11 @@
                             cancelButtonText: 'no',
                             type: 'warning'
                         }).then(() => {
-                            this.todo.splice(dataIndex, 1);
+                            let deleteIndex = this.todo.findIndex(data => {
+                                data.content === todo.content && data.type === todo.type;
+                            });
+
+                            this.todo.splice(deleteIndex, 1);
                         }).catch(() => {
                         });
                     } else {
