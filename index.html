@@ -116,7 +116,7 @@
         </el-row>
         <el-row>
             <el-col :span="12" :offset="6">
-                <el-input type="textarea"
+                <el-input type="text"
                           @keydown.enter.native="storeTodo"
                           v-model="todoInput">
                 </el-input>
@@ -443,8 +443,13 @@
                             type: 'warning'
                         }).then(() => {
                             let deleteIndex = this.todo.findIndex(data => {
-                                data.content === todo.content && data.type === todo.type;
+                                return data.content === todo.content && data.type === todo.type;
                             });
+
+                            if (deleteIndex === -1) {
+                                alert('index error!');
+                                return
+                            }
 
                             this.todo.splice(deleteIndex, 1);
                         }).catch(() => {
@@ -495,7 +500,7 @@
                     });
                 },
                 storeTodo() {
-                    if (!this.todoInput) {
+                    if (!this.todoInput || !this.todoInput.replace(/\s/g, '').length) {
                         return;
                     }
 
