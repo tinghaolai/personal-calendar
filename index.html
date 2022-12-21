@@ -143,7 +143,9 @@
                     <div v-for="(data, dataIndex) in groupData.todo">
                         <el-autocomplete
                                 style="width: 100px"
-                                v-model="data.type"
+                                @select="todoTempTypeChange(data)"
+                                @change="todoTempTypeChange(data)"
+                                v-model="data.tempType"
                                 class="inline-input"
                                 v-model="state1"
                                 :fetch-suggestions="todoTypeSearch"
@@ -572,6 +574,9 @@
                     textArea.select();
                     document.execCommand('Copy');
                     textArea.remove();
+                },
+                todoTempTypeChange(todo) {
+                    todo.type = todo.tempType;
                 },
             },
             watch: {
