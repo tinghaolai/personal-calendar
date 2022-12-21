@@ -586,7 +586,7 @@
                 syncGroupToDayItems(groupData) {
                     let today = moment().format('YYYY-MM-DD');
                     if (!this.dayItems[today]) {
-                        this.dayItems[today] = [];
+                        this.$set(this.dayItems, today, []);
                     }
 
                     groupData.todo.forEach(data => {
