@@ -139,7 +139,12 @@
         <el-row>
             <el-col :span="12" :offset="6">
                 <template v-for="groupData in todoGroup">
-                    <h4>{{ groupData.type }}</h4>
+                    <div style="padding-top: 20px">
+                        <h4 style="display: inline">{{ groupData.type ? groupData.type : 'Default' }}</h4>
+                        <el-tooltip class="item" effect="dark" content="Sync to day items" placement="top">
+                            <el-button type="warning" icon="el-icon-star-off" circle @click="syncGroupToDayItems(groupData)"></el-button>
+                        </el-tooltip>
+                    </div>
                     <div v-for="(data, dataIndex) in groupData.todo">
                         <el-autocomplete
                                 style="width: 100px"
@@ -577,6 +582,23 @@
                 },
                 todoTempTypeChange(todo) {
                     todo.type = todo.tempType;
+                },
+                syncGroupToDayItems(groupData) {
+                    let today = moment().format('YYYY-MM-DD');
+                    if (!this.dayItems[today]) {
+                        this.dayItems[today] = [];
+                    }
+
+                    groupData.todo.forEach(data => {
+                        this.dayItems[today].push({
+                            date: today,
+                            content: data.content,
+                            start: null,
+                            end: null,
+                        });
+                    });
+
+                    console.log(groupData.todo);
                 },
             },
             watch: {
